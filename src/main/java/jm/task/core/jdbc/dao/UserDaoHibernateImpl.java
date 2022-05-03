@@ -63,11 +63,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = this.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-            session.createSQLQuery("INSERT INTO users (name, last_name, age) " +
-                    "VALUES (:name, :last_name, :age);")
-            .setParameter("name", name)
-            .setParameter("last_name", lastName)
-            .setParameter("age", age).executeUpdate();
+            session.save(new User(name, lastName, age));
 
             transaction.commit();
         } catch (Exception e) {
@@ -85,7 +81,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = this.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-           session.createSQLQuery("DELETE FROM users WHERE id=:id")
+           session.createQuery("DELETE FROM User WHERE id=:id")
                     .setParameter("id", id).executeUpdate();
 
             transaction.commit();
@@ -104,7 +100,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = this.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-            userList = session.createSQLQuery("SELECT * FROM users;").addEntity(User.class).list();
+            userList = (List<User>) session.createQuery("FROM User").list();
 
             transaction.commit();
         } catch (Exception e) {
@@ -122,7 +118,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = this.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-            session.createSQLQuery("DELETE FROM users;").executeUpdate();
+            session.createQuery("DELETE FROM User").executeUpdate();
 
             transaction.commit();
         } catch (Exception e) {
